@@ -24,6 +24,8 @@ BEGIN
      DECLARE @json NVARCHAR(MAX) = (Select @ResponseText)
      SELECT *
      FROM OPENJSON(@json)
+     SELECT *
+     FROM OPENJSON(@json)
           WITH ( -- sql_table_column <- json field
                  id NVARCHAR(30) '$.id',
                  name NVARCHAR(50) '$.name'
