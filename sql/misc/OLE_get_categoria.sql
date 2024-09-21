@@ -1,6 +1,6 @@
 -- https://zealousweb.medium.com/calling-rest-api-from-sql-server-stored-procedure-85ec1ab73504
 
-DECLARE @URL NVARCHAR(MAX) = 'http://localhost:5000/restaurante/categorias/categoria=1';
+DECLARE @URL NVARCHAR(MAX) = 'http://localhost:5000/restaurante/categorias/id_categoria=1';
 Declare @Object as Int;
 Declare @ResponseText as Varchar(8000);
 Declare @retorno as Varchar(8000);

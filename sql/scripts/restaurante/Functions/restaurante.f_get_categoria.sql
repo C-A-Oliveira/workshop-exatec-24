@@ -1,4 +1,4 @@
-create or alter function busca_categoria(
+create or alter function restaurante.f_get_categoria(
     @id_categoria int
 )
 returns varchar(max)
@@ -8,7 +8,7 @@ begin
     
     IF not EXISTS (select top 1 1 from restaurante.categoria where id = @id_categoria)
     BEGIN        
-        RETURN null
+        RETURN 'Categoria inexistente.'
     END
 
     select @cat = concat(nome, ' - ', descricao)

@@ -3,7 +3,7 @@ AUTHORIZATION dbo
 go
 
 create table restaurante.categoria(
-    id INT PRIMARY KEY IDENTITY(1,1),
+    id INT  IDENTITY(1,1),
     nome varchar(50),
     descricao varchar(50)
 )
@@ -23,30 +23,30 @@ VALUES
 GO
 
 create table restaurante.item(
-    id INT PRIMARY KEY IDENTITY(1,1) 
-    ,nome VARCHAR(50)
+    id INT  IDENTITY(1,1) 
+    ,nome NVARCHAR(50)
     ,valor NUMERIC(19,2)
-    ,id_categoria INT FOREIGN KEY REFERENCES restaurante.categoria(id)
-    ,descricao VARCHAR(100)
+    ,id_categoria INT 
+    ,descricao NVARCHAR(100)
 )
 GO
 
 create table restaurante.pedido(
-    id INT PRIMARY KEY IDENTITY(1,1)
+    id INT  IDENTITY(1,1)
     ,valor INT
     ,nome_cliente VARCHAR(max)
 )
 GO
 
 create table restaurante.item_pedido(
-    id INT PRIMARY KEY IDENTITY(1,1) 
-    ,id_item INT FOREIGN KEY REFERENCES restaurante.item(id)
-    ,id_pedido INT FOREIGN KEY REFERENCES restaurante.pedido(id)
+    id INT  IDENTITY(1,1) 
+    ,id_item INT 
+    ,id_pedido INT 
 )
 GO
 
 create table restaurante.comanda(
-    id INT PRIMARY KEY IDENTITY(1,1)
+    id INT  IDENTITY(1,1)
     ,aberta BIT
     ,valor_total NUMERIC(19,2)
     ,data_venda smalldatetime
@@ -54,8 +54,8 @@ create table restaurante.comanda(
 GO
 
 create table restaurante.comanda_pedido(
-    id INT PRIMARY KEY IDENTITY(1,1)
-    ,id_comanda INT FOREIGN KEY REFERENCES restaurante.comanda(id)
-    ,id_pedido INT FOREIGN KEY REFERENCES restaurante.pedido(id)
+    id INT  IDENTITY(1,1)
+    ,id_comanda INT 
+    ,id_pedido INT 
 )
 GO

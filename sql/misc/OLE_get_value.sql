@@ -1,4 +1,5 @@
 -- https://zealousweb.medium.com/calling-rest-api-from-sql-server-stored-procedure-85ec1ab73504
+
 DECLARE @WDay nvarchar = N'day=' + convert(nvarchar(1),datepart(dw, getdate()))
 DECLARE @URL NVARCHAR(MAX) = concat(N'http://localhost:5000/', @WDay);
 Declare @Object as Int;
