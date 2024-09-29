@@ -141,24 +141,95 @@ def add_item():
 
 # ----- PEDIDOS
 
+@app.route("/restaurante/pedidos/", methods=["GET"])
 # EX. 06 - lista todos os pedidos
 def get_pedidos():
-    return
+    
+    comando = f"""exec restaurante.p_get_pedidos"""
+    conexao = pyodbc.connect(dados_conexao)
+    cursor = conexao.cursor()
+    retorno = cursor.execute(comando).fetchone()
+    
+    for r in retorno:
+        pedidos = r
+    conexao.close()
+        
+    return {"success": json.loads(pedidos)}, 200
 
+@app.route("/restaurante/pedido/id_pedido=<int:id_pedido>", methods=["GET"])
 # EX. 07 - busca 1 unico pedido
-def get_pedido():
-    return
+def get_pedido(id_pedido):
+    
+    comando = f"""exec restaurante.p_get_pedido {id_pedido}"""
+    conexao = pyodbc.connect(dados_conexao)
+    cursor = conexao.cursor()
+    retorno = cursor.execute(comando).fetchone()
+    
+    for r in retorno:
+        pedido = r
+    conexao.close()
+        
+    return {"success": json.loads(pedido)}, 200
 
+@app.route("/restaurante/pedidos/ativos/", methods=["GET"])
 # Criar uma procedure que liste todos os pedidos com status “Em-Aberto”.
 def get_pedidos_ativos():
-    return
+    comando = f"""exec restaurante.p_get_pedidos_ativos"""
+    conexao = pyodbc.connect(dados_conexao)
+    cursor = conexao.cursor()
+    retorno = cursor.execute(comando).fetchone()
+    
+    for r in retorno:
+        pedidos = r
+    conexao.close()
+        
+    return {"success": json.loads(pedidos)}, 200
 
+@app.route("/restaurante/pedido/", methods=["POST"])
 # Criar uma procedure que crie/abra um pedido novo, contendo 1 ou mais itens. Não deve permitir a criação sem nenhum item.
 def add_pedido():
-    return
+    body = json.dumps(request.json)
+    comando = f"""
+    declare @ret_msg nvarchar(max)=null, @ret_cd int = null
+    exec restaurante.p_add_pedido N'{body}', @ret_msg output, @ret_cd output
+    select 
+        retorno_msg = @ret_msg
+        ,retorno_cd = @ret_cd
+    """ 
+    conexao = pyodbc.connect(dados_conexao)
+    cursor = conexao.cursor()
+    try:
+        retorno_con = cursor.execute(comando).fetchone()
+        retorno= jsonify({'success': { 'retorno_msg': retorno_con.retorno_msg,'retorno_cd': retorno_con.retorno_cd}})
+        conexao.commit() # Insersão de dados - commit da transação no banco de dados
+    except AttributeError:
+        retorno= jsonify({'success': { 'retorno_msg': AttributeError,'retorno_cd': -1}})
+    finally:    
+        conexao.close()
+    return retorno, 201
 
+@app.route("/restaurante/pedido/id_pedido=<int:id_pedido>", methods=["POST"])
 # Criar uma procedure que acrescenta 1 ou mais itens a um pedido existente.
-def add_to_pedido():
+def add_to_pedido(id_pedido):
+    body = json.dumps(request.json)
+    comando = f"""
+    declare @ret_msg nvarchar(max)=null, @ret_cd int = null
+    exec restaurante.p_add_to_pedido {id_pedido}, N'{body}', @ret_msg output, @ret_cd output
+    select 
+        retorno_msg = @ret_msg
+        ,retorno_cd = @ret_cd
+    """ 
+    conexao = pyodbc.connect(dados_conexao)
+    cursor = conexao.cursor()
+    try:
+        retorno_con = cursor.execute(comando).fetchone()
+        retorno= jsonify({'success': { 'retorno_msg': retorno_con.retorno_msg,'retorno_cd': retorno_con.retorno_cd}})
+        conexao.commit() # Insersão de dados - commit da transação no banco de dados
+    except AttributeError:
+        retorno= jsonify({'success': { 'retorno_msg': AttributeError,'retorno_cd': -1}})
+    finally:    
+        conexao.close()
+    return retorno, 201
     return
 
 # Criar uma procedure que liste todos os pedidos, com as descrições de seus itens formatadas de uma forma apresentável (item + categoria)
@@ -167,7 +238,7 @@ def get_pedidos_formatado():
 
 
 ######## --- DESAFIOS --- ########
-@app.route("/restaurante/desafio/pedido/ativos/", methods=["GET"])
+@app.route("/restaurante/desafio/pedidos/ativos/", methods=["GET"])
 # D. 01 - Criar uma procedure que liste todos os pedidos com status “Em-Aberto”.
 def desafio_get_pedidos_ativos():
     return '', 204
